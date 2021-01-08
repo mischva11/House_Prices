@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 
 def dummyEncode(df):
-        columnsToEncode = list(df.select_dtypes(include=['category','object']))
+        columnsToEncode = list(df.select_dtypes(include=['category', 'object']))
         le = LabelEncoder()
         df = df.where(df.notnull(), 'Nan')
         for feature in columnsToEncode:
@@ -14,13 +14,17 @@ def dummyEncode(df):
         return df
 
 
-data = pd.read_csv("data/test.csv")
+data = pd.read_csv("data/train.csv")
 
 df = dummyEncode(data)
 
-df = df/df.max().astype(np.float64)
+for column in df:
+    data[column] = df[column]
 
+data = data/data.max().astype(np.float64)
 
-#df.apply(lambda x: x/x.max(), axis=0)
+#pd.DataFrame.to_csv(data, "data/processed.csv")
 
-pd.DataFrame.to_csv(df, "data/processed.csv")
+test = data.columns[data.isnull().any()]
+
+print(test)
